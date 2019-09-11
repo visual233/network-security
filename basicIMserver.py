@@ -46,7 +46,7 @@ while True:
             s.send(msg_ser)
 
         if c in ready_to_read:
-            data = conn.recv(8, socket.MSG_WAITALL)
+            data = c.recv(8, socket.MSG_WAITALL)
             if len(data) == 0 and c in conn_list:
                 conn_list.remove(c)
                 continue
