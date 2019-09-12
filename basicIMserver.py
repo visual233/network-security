@@ -51,7 +51,7 @@ while True:
                 if c in conn_list:
                     conn_list.remove(c)
                 continue
-            proto.SerializeToString(data)
+            proto.ParseFromString(data)
             print(proto.name+':'+proto.msg, flush=True)
             proto_ser = proto.SerializeToString()
             for con in conn_list:
