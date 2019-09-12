@@ -43,7 +43,8 @@ while True:
             proto.name = 'server'
             proto.msg = user_input
             msg_ser = proto.SerializeToString()
-            s.send(msg_ser)
+            for con in conn_list:
+                con.send(msg_ser)
 
         else:
             data = c.recv(1024)
