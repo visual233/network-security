@@ -47,8 +47,9 @@ while True:
 
         else:
             data = c.recv(1024)
-            if len(data) == 0 and c in conn_list:
-                conn_list.remove(c)
+            if len(data) == 0:
+                if c in conn_list:
+                    conn_list.remove(c)
                 continue
             proto.SerializeToString(data)
             print(proto.name+':'+proto.msg, flush=True)
