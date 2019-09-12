@@ -38,14 +38,14 @@ while True:
             conn_list.append(conn)
             readers.append(conn)
                 
-        if sys.stdin in ready_to_read:
+        elif c in sys.stdin:
             user_input = input()
             proto.name = 'server'
             proto.msg = user_input
             msg_ser = proto.SerializeToString()
             s.send(msg_ser)
 
-        if c in ready_to_read:
+        else:
             data = c.recv(1024)
             if len(data) == 0 and c in conn_list:
                 conn_list.remove(c)
