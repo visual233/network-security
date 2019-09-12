@@ -23,9 +23,10 @@ read_handler = [sys.stdin, s]
 while True:
     ready_to_read, _, _ = select.select(read_handler, [], [])
     proto = pb.Chat()
-    if s in sys.stdin:
+    if sys.stdin in ready_to_read:
         user_input = input()
         if user_input.lower() == 'exit':
+            s.close()
             break
         proto.name = args.nickname
         proto.msg = user_input
