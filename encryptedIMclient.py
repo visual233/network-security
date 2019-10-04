@@ -1,10 +1,13 @@
 import argparse
 import socket
 import select
-import basicim_nugget_pb2
+import prototest_pb2
 import sys
 import struct
 from Crypto.Cipher import AES
+from binascii import b2a_hex, a2b_hex
+import hashlib
+import hmac
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-n', dest='nickname', help='your nickname', required=True)
@@ -24,13 +27,18 @@ def encryption(s):
         add = l - (count%l)
     s += '\0'*add
     cipher_text = cipher.encrypt(s)
-    return cipher_text
+    return b2a_hex(cipher_text)
 
 def decryption(c_s):
     key = args.confidentialitykey
     cipher = AES.new(key, AES.MODE_CBC, key)
-    plain_text = cipher.decrypt(c_s)
+    plain_text = cipher.decrypt(a2b_hex(c_s))
     return plain_text
+
+def authentic_encode(s):
+    k = args.authenticitykey
+    hm = hmac.new(k, s, hashlib.sha256)
+    return hm.hexdigest()
 
 
 def main():
@@ -48,9 +56,13 @@ def main():
             if user_input.rstrip().lower() == "exit":
                 s.close()
                 exit(0)
-            nugget = basicim_nugget_pb2.BasicIMNugget()
+            nugget = prototest_pb2.BasicIMNugget()
             nugget.nickname = args.nickname
-            nugget.message = user_input
+            #encrypt message
+            en_message = encryption(user_input)
+            au_message = authentic_encode(en_message)
+            nugget.message = au_message + ',' + en_message
+
             serialized = nugget.SerializeToString()
             serialized_len = len(serialized)
             s.send( struct.pack("!H", serialized_len ) )
@@ -59,9 +71,19 @@ def main():
             packed_len = s.recv(2,socket.MSG_WAITALL)
             unpacked_len = struct.unpack("!H", packed_len )[0]
             serialized = s.recv(unpacked_len,socket.MSG_WAITALL)
-            nugget = basicim_nugget_pb2.BasicIMNugget()
-            nugget.ParseFromString( serialized )
-            print( "%s: %s" % (nugget.nickname, nugget.message), flush=True )
+            nugget = prototest_pb2.BasicIMNugget()
+            nugget.ParseFromString(serialized)
+
+            #verify and decrypt
+            receive = nugget.message.split(',')
+            auth = authentic_encode(receive[1])
+            if auth == receive[0]:
+                m = decryption(receive[1])
+                print("%s: %s" % (nugget.nickname, m), flush=True)
+            else:
+                s.close()
+                exit(0)
+
 
 if __name__ == '__main__':
     main()
