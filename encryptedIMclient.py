@@ -86,13 +86,15 @@ def main():
             nugget.ParseFromString(serialized)
 
             #verify and decrypt
+            name = nugget.nickname
             enm = nugget.en_message
             aum = nugget.au_message
             r_iv = nugget.iv
             auth = authentic_encode(enm+r_iv, key_a)
             if auth == aum:
                 m = decryption(enm, key_e)
-                print("%s: %s" % (nugget.nickname, m), flush=True)
+                n = decryption(name, key_e)
+                print("%s: %s" % (n, m), flush=True)
             else:
                 s.close()
                 exit(0)
