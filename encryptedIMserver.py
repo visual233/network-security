@@ -1,7 +1,12 @@
 import socket, select
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-p', dest='port', help='port', required=True)
+args = parser.parse_args()
 
 listen_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-listen_socket.bind(("", 9999)) 
+listen_socket.bind(("", int(args.port))) 
 listen_socket.listen(10)       # specify the "backlog" for this socket
 
 connected_clients = []

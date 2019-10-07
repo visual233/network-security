@@ -10,6 +10,7 @@ import hashlib
 import hmac
 
 parser = argparse.ArgumentParser()
+parser.add_argument('-p', dest='port', help='port', required=True)
 parser.add_argument('-n', dest='nickname', help='your nickname', required=True)
 parser.add_argument('-s', dest='server', help='server', required=True)
 parser.add_argument('-c', dest='confidentialitykey', required=True)
@@ -52,7 +53,7 @@ def main():
 
     # connect to server
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect( (args.server,9999) )
+    s.connect( (args.server,int(args.port)) )
 
     read_fds = [ sys.stdin, s ]
     key_e = args.confidentialitykey
