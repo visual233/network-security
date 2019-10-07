@@ -93,7 +93,7 @@ def main():
             r_iv = nugget.iv
             auth = authentic_encode(enm+r_iv, key_a)
             if auth == aum:
-                m = decryption(enm, key_e)
+                m = decryption(enm, key_e, r_iv)
                 n = decryption(name, key_e, r_iv)
                 print("%s: %s" % (n, m), flush=True)
             else:
