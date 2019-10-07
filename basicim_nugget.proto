@@ -6,7 +6,7 @@ message BasicIMNugget {
 
 	required bytes nickname = 1;
 	required bytes en_message = 2;
-	required string an_message = 3;
+	required string au_message = 3;
 	required bytes iv = 4;
 
 }
