@@ -4,7 +4,7 @@ package cosc435;
 
 message BasicIMNugget {
 
-	required string nickname = 1;
+	required bytes nickname = 1;
 	required bytes en_message = 2;
 	required string an_message = 3;
 	required bytes iv = 4;
