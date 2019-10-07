@@ -88,6 +88,7 @@ def main():
 
             #verify and decrypt
             name = nugget.nickname
+            print(name)
             enm = nugget.en_message
             aum = nugget.au_message
             r_iv = nugget.iv
