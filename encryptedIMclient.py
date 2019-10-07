@@ -36,7 +36,7 @@ def encryption(s, key):
     cipher_text = cipher.encrypt(s)
     return cipher_text
 
-def decryption(c_s, key):
+def decryption(c_s, key, iv):
     # key = args.confidentialitykey
     key = add_length(key)
     cipher = AES.new(key.encode('utf-8'), AES.MODE_CBC, iv)
@@ -88,14 +88,13 @@ def main():
 
             #verify and decrypt
             name = nugget.nickname
-            print(name)
             enm = nugget.en_message
             aum = nugget.au_message
             r_iv = nugget.iv
             auth = authentic_encode(enm+r_iv, key_a)
             if auth == aum:
                 m = decryption(enm, key_e)
-                n = decryption(name, key_e)
+                n = decryption(name, key_e, r_iv)
                 print("%s: %s" % (n, m), flush=True)
             else:
                 s.close()
