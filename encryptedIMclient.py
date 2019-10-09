@@ -22,6 +22,8 @@ iv = ''.join(random.choice(string.ascii_letters+string.digits) for _ in range(16
 def add_length(s):
     l = 32
     count = len(s)
+    if count>32:
+        return s[:32]
     add = 0
     if count % l != 0:
         add = l - (count % l)
@@ -62,7 +64,11 @@ def main():
     while True:
         (ready_list,_,_) = select.select(read_fds,[],[])
         if sys.stdin in ready_list:
-            user_input = input()
+            try:
+                user_input = input()
+            except EOFError:
+                s.close()
+                exit(0)
             if user_input.rstrip().lower() == "exit":
                 s.close()
                 exit(0)
@@ -97,8 +103,8 @@ def main():
                 n = decryption(name, key_e, r_iv)
                 print("%s: %s" % (n, m), flush=True)
             else:
-                s.close()
-                exit(0)
+                print('authentic fail', flush=True)
+                continue
 
 
 if __name__ == '__main__':
