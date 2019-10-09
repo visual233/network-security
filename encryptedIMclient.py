@@ -33,15 +33,16 @@ def add_length(s):
 def encryption(s, key):
     # key = args.confidentialitykey
     s = add_length(s)
-    key = add_length(key)
-    cipher = AES.new(key.encode('utf-8'), AES.MODE_CBC, iv)
+    s = s.encode('utf-8')
+    key = hashlib.sha256(key.encode('utf-8')).digest()
+    cipher = AES.new(key, AES.MODE_CBC, iv)
     cipher_text = cipher.encrypt(s)
     return cipher_text
 
 def decryption(c_s, key, iv):
     # key = args.confidentialitykey
-    key = add_length(key)
-    cipher = AES.new(key.encode('utf-8'), AES.MODE_CBC, iv)
+    key = hashlib.sha256(key.encode('utf-8')).digest()
+    cipher = AES.new(key, AES.MODE_CBC, iv)
     plain_text = cipher.decrypt(c_s)
     return bytes.decode(plain_text).rstrip('\0')
 
@@ -65,7 +66,7 @@ def main():
         (ready_list,_,_) = select.select(read_fds,[],[])
         if sys.stdin in ready_list:
             try:
-                user_input = input()
+                user_input = str(input())
             except EOFError:
                 s.close()
                 exit(0)
